@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday to Pasii 💕</title>
+    
+    <!-- นำเข้าฟอนต์ Minimal & Modern -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@300;400;500;600;700&family=Mali:wght@500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'IBM Plex Sans Thai Looped', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #faf6f8;
+            background-image: radial-gradient(#f3e8ff 1.5px, transparent 1.5px), radial-gradient(#fbcfe8 1.5px, #faf6f8 1.5px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 24px 12px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            padding: 36px 28px;
+            border-radius: 32px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(225, 175, 209, 0.18);
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        h1 {
+            color: #5c3d46;
+            font-family: 'Mali', cursive;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #cf71af;
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        p {
+            color: #785a63;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            font-weight: 400;
+        }
+
+        /* เค้กสไตล์มินิมอล */
+        .cake-container {
+            position: relative;
+            width: 170px;
+            height: 140px;
+            margin: 15px auto 20px auto;
+            cursor: pointer;
+        }
+
+        .plate {
+            width: 170px;
+            height: 10px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .layer-bottom {
+            width: 140px;
+            height: 42px;
+            background: #fbcfe8;
+            border-radius: 12px 12px 6px 6px;
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+        }
+
+        .layer-bottom::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 12px;
+            opacity: 0.8;
+        }
+
+        .layer-top {
+            width: 110px;
+            height: 38px;
+            background: #e9d5ff;
+            border-radius: 12px 12px 6px 6px;
+            position: absolute;
+            bottom: 52px;
+            left: 30px;
+        }
+
+        .layer-top::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 12px;
+            opacity: 0.8;
+        }
+
+        .icing-decor {
+            position: absolute;
+            top: 48px;
+            left: 30px;
+            width: 110px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 2;
+        }
+
+        .cherry {
+            width: 8px;
+            height: 8px;
+            background: #f43f5e;
+            border-radius: 50%;
+        }
+
+        .candle {
+            width: 10px;
+            height: 32px;
+            background: #fef08a;
+            border-radius: 3px;
+            position: absolute;
+            bottom: 90px;
+            left: 80px;
+            z-index: 3;
+        }
+
+        .wick {
+            width: 2px;
+            height: 6px;
+            background: #71717a;
+            position: absolute;
+            top: -6px;
+            left: 4px;
+        }
+
+        .flame {
+            width: 14px;
+            height: 22px;
+            background: radial-gradient(ellipse at bottom, #fde047 0%, #fb923c 100%);
+            border-radius: 50% 50% 35% 35%;
+            position: absolute;
+            top: -26px;
+            left: -2px;
+            animation: flicker 0.8s infinite alternate ease-in-out;
+            box-shadow: 0 0 10px #fb923c;
+            transform-origin: center bottom;
+            transition: all 0.3s ease;
+        }
+
+        .flame.off {
+            opacity: 0;
+            transform: scale(0.1);
+            animation: none;
+            box-shadow: none;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -22px;
+            left: 1px;
+            width: 8px;
+            height: 8px;
+            background: rgba(161, 161, 170, 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .smoke.active {
+            animation: riseSmoke 1.8s ease-out forwards;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        @keyframes riseSmoke {
+            0% { opacity: 0.7; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-35px) scale(2.5); filter: blur(3px); }
+        }
+
+        /* 📸 สไตล์รูปภาพโพลาลอยด์ 📸 */
+        .polaroid-gallery {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 15px 0;
+            position: relative;
+        }
+
+        .polaroid-card {
+            background: #ffffff;
+            padding: 9px 9px 24px 9px;
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(92, 61, 70, 0.12);
+            transition: all 0.3s ease;
+            width: 145px;
+            position: relative;
+        }
+
+        .polaroid-card img {
+            width: 100%;
+            height: 135px;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .polaroid-card.left {
+            transform: rotate(-7deg);
+            margin-right: -15px;
+            z-index: 2;
+        }
+
+        .polaroid-card.left img {
+            object-position: center 25%;
+        }
+
+        .polaroid-card.right {
+            transform: rotate(6deg) translateY(6px);
+            z-index: 1;
+        }
+
+        .polaroid-card.right img {
+            object-position: center center;
+        }
+
+        .polaroid-card:hover {
+            transform: scale(1.08) rotate(0deg) !important;
+            box-shadow: 0 10px 24px rgba(244, 114, 182, 0.28);
+            z-index: 10 !important;
+        }
+
+        /* 🎵 แถบเครื่องเล่นเพลงสไตล์มินิมอลขนาดพอดีคำ 🎵 */
+        .song-banner-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 8px 14px;
+            border-radius: 16px;
+            border: 1px solid #f3e8ff;
+            box-shadow: 0 3px 12px rgba(225, 175, 209, 0.18);
+            text-decoration: none;
+            margin-top: 14px;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .song-banner-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 18px rgba(244, 114, 182, 0.25);
+            border-color: #fbcfe8;
+        }
+
+        .song-cover-container {
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .song-cover-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sound-wave-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .wave-bar {
+            width: 3.5px;
+            height: 18px;
+            background: #ffffff;
+            border-radius: 10px;
+            animation: soundWave 1.2s ease-in-out infinite alternate;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0.1s; height: 12px; }
+        .wave-bar:nth-child(2) { animation-delay: 0.3s; height: 20px; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 15px; }
+
+        @keyframes soundWave {
+            0% { transform: scaleY(0.4); }
+            100% { transform: scaleY(1.1); }
+        }
+
+        .song-text-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .song-title-main {
+            color: #111827;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: -0.2px;
+        }
+
+        .song-artist-sub {
+            color: #111827;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
+        }
+
+        .btn-action {
+            background: #f472b6;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(244, 114, 182, 0.3);
+            transition: all 0.25s ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: #ec4899;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(244, 114, 182, 0.4);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        #secret-message {
+            display: none;
+            margin-top: 18px;
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* กล่องจดหมายมินิมอล */
+        .message-box {
+            background: #fff5f7;
+            border: 1px solid #fbcfe8;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .message-box h3 {
+            color: #be185d;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .message-box p {
+            color: #5c3d46;
+            font-size: 14px;
+            line-height: 1.75;
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+
+        .floating-element {
+            position: absolute;
+            bottom: -30px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+            animation: floatUp 8s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.7); opacity: 0.6; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) rotate(180deg) scale(1); opacity: 0; }
+        }
+
+        .click-heart {
+            position: absolute;
+            pointer-events: none;
+            animation: popHeart 0.8s ease-out forwards;
+            font-size: 18px;
+            z-index: 999;
+        }
+
+        @keyframes popHeart {
+            0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+            100% { transform: scale(1.5) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h1>Happy Birthday!!</h1>
+            <div class="subtitle">✨ To Pasii 🎂💖 ✨</div>
+
+            <div class="cake-container" onclick="blowCandle()" title="คลิกที่เค้กเพื่อเป่าเทียน!">
+                <div class="plate"></div>
+                <div class="layer-bottom"></div>
+                <div class="layer-top"></div>
+                <div class="icing-decor">
+                    <div class="cherry"></div>
+                    <div class="cherry"></div>
+                    <div class="cherry"></div>
+                </div>
+                <div class="candle">
+                    <div class="wick"></div>
+                    <div class="flame" id="flame"></div>
+                    <div class="smoke" id="smoke"></div>
+                </div>
+            </div>
+
+            <p id="cakeHint">หลับตาอธิษฐานนับ 1 2 3 แล้วเป่าเทียนนะ 🙏🏻💖</p>
+            
+            <button class="btn-action" id="blowBtn" onclick="blowCandle()">
+                <span>เป่าเพี๊ยง!! 🎂💨</span>
+            </button>
+
+            <div id="secret-message">
+                
+                <!-- 📸 รูปโพลาลอยด์ 2 รูป 📸 -->
+                <div class="polaroid-gallery">
+                    <div class="polaroid-card left">
+                        <img src="image/poysun.JPG" alt="รูปคู่ 1">
+                    </div>
+                    <div class="polaroid-card right">
+                        <img src="image/poysea.JPG" alt="รูปคู่ 2">
+                    </div>
+                </div>
+
+                <!-- 🌟 ข้อความหลังเป่าเทียน 🌟 -->
+                <p id="blownText" style="margin: 15px 0 10px 0; font-weight: 500; color: #87787e; font-size: 12px;">
+                    เทียนดับแล้ว! ขอให้ทุกคำอธิษฐานเป็นจริงนะอ้วนน 🌟
+                </p>
+
+                <div class="message-box">
+                    <h3>💌 ข้อความจากวุ้นถึงปอย 💐</h3>
+                    <p>
+                        สุขสันต์วันเกิดนะปอย 🎂💖<br>
+                        ปีนี้อายุ 21 แล้ว วุ้นขอให้ปอยมีสุขภาพที่แข็งแรง <br>
+                        มีรอยยิ้มที่สดใสในทุกวัน ประสบความสำเร็จในทุกด้าน <br>
+                        พบเจอแต่คนใจดี หวังว่าเราจะได้อวยพรให้กันทุกๆปี <br>
+                        วุ้นภูมิใจทุกการเติบโตของปอยนะ :) 🤍
+                    </p>
+                </div>
+
+                <!-- 🎵 แถบเครื่องเล่นเพลงสไตล์มินิมอลขนาดพอดีคำ 🎶 -->
+                <a href="https://youtu.be/CTw1LPnN9uY?si=KPk3bBrT3YYTkAgJ" target="_blank" class="song-banner-card">
+                    <div class="song-cover-container">
+                        <img src="image/song.JPG" alt="Song Cover">
+                        <div class="sound-wave-overlay">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </div>
+                    <div class="song-text-info">
+                        <span class="song-title-main">ฉันจะเป็นทุกอย่าง</span>
+                        <span class="song-artist-sub">GOODMORNING</span>
+                    </div>
+                </a>
+
+                <div style="margin-top: 18px;">
+                    <a href="index.html" class="btn-action" style="background: #a855f7;">
+                        <span>ลองเป่าเค้กอีกรอบบ 😝</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let isBlown = false;
+
+        function blowCandle() {
+            if (isBlown) {
+                triggerConfettiBurst();
+                return;
+            }
+
+            isBlown = true;
+            
+            const flame = document.getElementById('flame');
+            const smoke = document.getElementById('smoke');
+            flame.classList.add('off');
+            smoke.classList.add('active');
+
+            triggerConfettiBurst();
+
+            document.getElementById('cakeHint').style.display = 'none';
+            document.getElementById('blowBtn').style.display = 'none';
+
+            setTimeout(() => {
+                const message = document.getElementById('secret-message');
+                message.style.display = 'block';
+                message.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 600);
+        }
+
+        function triggerConfettiBurst() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 60,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['#f472b6', '#c084fc', '#fbcfe8']
+                });
+            }
+        }
+
+        function createFloatingElement() {
+            const el = document.createElement('div');
+            el.classList.add('floating-element');
+            
+            const shapes = ['🌸', '✨', '💕', '🤍', '🍰'];
+            el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            const size = Math.random() * 12 + 12;
+            el.style.fontSize = size + 'px';
+            el.style.left = Math.random() * 95 + 'vw';
+            
+            const duration = Math.random() * 4 + 6;
+            el.style.animationDuration = duration + 's';
+
+            document.body.appendChild(el);
+
+            setTimeout(() => {
+                el.remove();
+            }, duration * 1000);
+        }
+
+        setInterval(createFloatingElement, 500);
+
+        window.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.cake-container')) return;
+
+            const heart = document.createElement('div');
+            heart.classList.add('click-heart');
+            heart.textContent = ['💖', '✨', '🤍', '🌸'][Math.floor(Math.random() * 4)];
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+
+            const tx = (Math.random() - 0.5) * 80 + 'px';
+            const ty = (Math.random() - 0.5) * 80 - 30 + 'px';
+            heart.style.setProperty('--tx', tx);
+            heart.style.setProperty('--ty', ty);
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        });
+    </script>
+</body>
+</html>
