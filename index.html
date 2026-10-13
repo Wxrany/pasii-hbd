@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday to Pasii 💕</title>
+
+    <!-- นำเข้าฟอนต์ Minimal & Modern -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@300;400;500;600&family=Mali:wght@500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'IBM Plex Sans Thai Looped', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #faf6f8;
+            background-image: radial-gradient(#f3e8ff 1.5px, transparent 1.5px), radial-gradient(#fbcfe8 1.5px, #faf6f8 1.5px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* การ์ดแก้วแบบมินิมอล */
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            padding: 36px 28px;
+            border-radius: 32px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(225, 175, 209, 0.18);
+            max-width: 360px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: #5c3d46;
+            font-family: 'Mali', cursive;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #d97706;
+            color: #cf71af;
+            font-size: 23px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* รูปภาพเด็ก */
+        .profile-img {
+            max-width: 180px;
+            max-height: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border: none;
+            margin: 12px auto 16px auto;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.04));
+        }
+
+        .hint-text {
+            color: #785a63;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        /* จุด PIN */
+        .pin-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1.5px solid #f4a261;
+            border-color: #f472b6;
+            background: transparent;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dot.filled {
+            background: #e879f9;
+            border-color: #e879f9;
+            transform: scale(1.15);
+        }
+
+        /* แป้นพิมพ์ตัวเลขแบบเรียบมินิมอล */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 240px;
+            margin: 0 auto;
+        }
+
+        .key {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            background: #ffffff;
+            color: #5c3d46;
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            transition: all 0.15s ease;
+        }
+
+        .key:active {
+            background: #fdf2f8;
+            color: #db2777;
+            transform: scale(0.94);
+        }
+
+        .key.btn-clear {
+            font-size: 14px;
+            background: #fff5f5;
+            border-color: #fecdd3;
+            color: #e11d48;
+        }
+
+        .error-msg {
+            color: #e11d48;
+            font-size: 12.5px;
+            font-weight: 500;
+            margin-top: 16px;
+            height: 18px;
+            visibility: hidden;
+        }
+
+        .error-msg.active {
+            visibility: visible;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .floating-heart {
+            position: absolute;
+            bottom: -30px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+            animation: floatUp 8s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.7); opacity: 0.6; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) rotate(180deg) scale(1); opacity: 0; }
+        }
+
+        .click-heart {
+            position: absolute;
+            pointer-events: none;
+            animation: popHeart 0.8s ease-out forwards;
+            font-size: 18px;
+            z-index: 999;
+        }
+
+        @keyframes popHeart {
+            0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+            100% { transform: scale(1.5) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Happy Birthday</h1>
+        <div class="subtitle">✨ To Pasii 🎂💖 ✨</div>
+
+        <img src="image/kid.png" alt="Pasii" class="profile-img">
+
+        <p class="hint-text">ปอยเกิดวันที่เท่าไหร่นะ? 🤨 </p>
+
+        <div class="pin-dots">
+            <div class="dot" id="dot-0"></div>
+            <div class="dot" id="dot-1"></div>
+            <div class="dot" id="dot-2"></div>
+            <div class="dot" id="dot-3"></div>
+            <div class="dot" id="dot-4"></div>
+            <div class="dot" id="dot-5"></div>
+        </div>
+
+        <div class="keypad">
+            <div class="key" onclick="appendPin('1')">1</div>
+            <div class="key" onclick="appendPin('2')">2</div>
+            <div class="key" onclick="appendPin('3')">3</div>
+            <div class="key" onclick="appendPin('4')">4</div>
+            <div class="key" onclick="appendPin('5')">5</div>
+            <div class="key" onclick="appendPin('6')">6</div>
+            <div class="key" onclick="appendPin('7')">7</div>
+            <div class="key" onclick="appendPin('8')">8</div>
+            <div class="key" onclick="appendPin('9')">9</div>
+            <div class="key btn-clear" onclick="clearPin()">C</div>
+            <div class="key" onclick="appendPin('0')">0</div>
+            <div class="key btn-clear" onclick="deletePin()">⌫</div>
+        </div>
+
+        <div id="errorMsg" class="error-msg">รหัสไม่ถูกต้อง ลองใหม่อีกครั้งน้า 🥺</div>
+    </div>
+
+    <script>
+        const CORRECT_PIN = "221048";
+        let currentPin = "";
+
+        function appendPin(num) {
+            if (currentPin.length < 6) {
+                currentPin += num;
+                updateDots();
+
+                if (currentPin.length === 6) {
+                    setTimeout(verifyPin, 150);
+                }
+            }
+        }
+
+        function deletePin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updateDots();
+                hideError();
+            }
+        }
+
+        function clearPin() {
+            currentPin = "";
+            updateDots();
+            hideError();
+        }
+
+        function updateDots() {
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i < currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        function verifyPin() {
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (currentPin === CORRECT_PIN) {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 60,
+                        spread: 60,
+                        origin: { y: 0.6 },
+                        colors: ['#f472b6', '#c084fc', '#fbcfe8']
+                    });
+                }
+
+                setTimeout(() => {
+                    window.location.href = "happy_birthday_pasii.html";
+                }, 400);
+
+            } else {
+                errorMsg.classList.add('active');
+                setTimeout(() => {
+                    clearPin();
+                }, 400);
+            }
+        }
+
+        function hideError() {
+            document.getElementById('errorMsg').classList.remove('active');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') {
+                appendPin(e.key);
+            } else if (e.key === 'Backspace') {
+                deletePin();
+            } else if (e.key === 'Escape' || e.key === 'Delete') {
+                clearPin();
+            }
+        });
+
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            
+            const shapes = ['💐', '✨', '💕', '❤️', '🍰'];
+            heart.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            const size = Math.random() * 12 + 12;
+            heart.style.fontSize = size + 'px';
+            heart.style.left = Math.random() * 95 + 'vw';
+            
+            const duration = Math.random() * 4 + 6;
+            heart.style.animationDuration = duration + 's';
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        setInterval(createFloatingHeart, 500);
+
+        window.addEventListener('click', (e) => {
+            if (e.target.closest('.keypad') || e.target.closest('.card')) return;
+
+            const heart = document.createElement('div');
+            heart.classList.add('click-heart');
+            heart.textContent = ['💖', '✨', '🤍', '🌸'][Math.floor(Math.random() * 4)];
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+
+            const tx = (Math.random() - 0.5) * 80 + 'px';
+            const ty = (Math.random() - 0.5) * 80 - 30 + 'px';
+            heart.style.setProperty('--tx', tx);
+            heart.style.setProperty('--ty', ty);
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        });
+    </script>
+</body>
+</html>
